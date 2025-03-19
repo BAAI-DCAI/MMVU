@@ -1,5 +1,5 @@
 <h1 align = "center">
-  MLLM Misresponses despite Visual Understanding (MMVU)
+  MMVU: Unveiling MLLM Misresponses Despite Visual Understanding
 </h1>
 
 <p align="center">
