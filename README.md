@@ -1,5 +1,5 @@
 <h1 align = "center">
-  Multimodal-Robustness-Benchmark
+  MLLM Misresponses despite Visual Understanding (MMVU)
 </h1>
 
 <p align="center">
@@ -8,9 +8,6 @@
     </a>
     <a href="https://huggingface.co/datasets/BAAI/Multimodal-Robustness-Benchmark">
         <img alt="Dataset" src="https://img.shields.io/badge/🤗%20Dataset-MMR%20Benchmark-yellow">
-    </a>
-    <a href="http://mmr.dataoptim.org/">
-        <img alt="Project Demo" src="https://img.shields.io/badge/🤖%20Project-Demo-blue">
     </a>
 </p>
 <p align="center">
@@ -26,11 +23,10 @@
 </p>
 
 
-
-This repo contains the official evaluation code and dataset for the paper“Seeing Clearly, Answering Incorrectly: A Multimodal Robustness Benchmark for Evaluating MLLMs on Leading Questions”.
+This repo contains the official evaluation code and dataset for the paper“Unveiling the Ignorance of MLLMs: Seeing Clearly, Answering Incorrectly”.
 
 ## 📢 News and Updates
-
+* 2025.02.27 🎉 The paper appears on CVPR25'!
 * 2024.06.18 🔥 **Checkpoints are released!** Check more details in HuggingFace: [Bunny-MMR-3B](https://huggingface.co/AI4VR/Bunny-MMR-3B), [Bunny-MMR-4B](https://huggingface.co/AI4VR/Bunny-MMR-4B), [Bunny-MMR-8B](https://huggingface.co/AI4VR/Bunny-MMR-8B).
 * 2024.06.18 🔥 **Paper is ready.** Check more details in [arXiv](https://arxiv.org/abs/2406.10638).
 * 2024.06.17 🔥 **Demo is available.** Check more details in [link](https://law1223.github.io/Multimodal-Robustness-Benchmark/). Welcome everyone to try it!
@@ -63,11 +59,13 @@ We will then add the necessary script to our repository and handle the inference
 
 Multimodal Large Language Models (MLLMs) have demonstrated impressive capabilities in visual understanding and reasoning, providing reasonably accurate answers, such as image descriptions. This has spurred extensive research into evaluating MLLMs. Most evaluation benchmarks assume that incorrect answers indicate a lack of understanding of the visual content. However, our findings reveal that, in many cases, MLLMs answer questions incorrectly despite correctly understanding the visual content. This suggests that incorrect answers do not necessarily imply a lack of comprehension but may instead result from a lack of robustness to leading questions.
 
+Multimodal Large Language Models (MLLMs) have displayed remarkable performance in multi-modal tasks, particularly in visual comprehension. However, we reveal that MLLMs often generate incorrect answers even when they understand the visual content. To this end, we manually construct a benchmark with 12 categories and design evaluation metrics that assess the degree of error in MLLM responses even when the visual content is seemingly understood. Based on this benchmark, we test 15 leading MLLMs and analyze the distribution of attention maps and logits of some MLLMs. 
+
 <p align="center">
-  <img src="./figure/cover_fig.jpg" alt="Logo">
+  <img src="./figure/cover_fig.png" alt="Logo">
 </p>
 
-To comprehensively measure MLLMs' understanding capability and robustness to leading questions, we introduce a multi-modal robustness benchmark (MMR). MMR contains paired positive and negative questions across 12 categories, meticulously annotated by humans. We manually construct 300 positive and 300 leading negative questions across three levels: character, attribute, and context. Character-level questions prompt identifying elements like characters or numbers, while attribute-level questions focus on properties such as color, texture, and quantity. Context-level inquiries delve into higher-level concepts like emotions, culture, and common sense. The positive questions aim to evaluate the model's understanding ability, while the misleading ones challenge its resistance to interference.
+To explore this phenomenon, we introduce the MLLM Misresponses despite Visual Understanding (MMVU) benchmark. The MMVU dataset consists of a benchmarking dataset for evaluating models as well as a training dataset. The former is curated by human annotators together with the appropriate metrics and analysis on the MLLM's attention and logit behavior. Based on the experiments, we propose a data construction pipeline to build a training dataset and prompting strategies to enhance the accuracy of MLLM responses.challenge its resistance to interference.
 
 ![mmr_benchmark](./figure/mmr_benchmark.png)
 
@@ -78,48 +76,9 @@ Please refer to our [evaluation](https://github.com/BAAI-DCAI/Multimodal-Robustn
 
 ## 🏆 Leaderboard
 
-| Method                          | Avg. RA ↑ | Char/Num | Pres.  | Color/Tex | Num.  | Shape | Posture | Pos.  | Abstract. | Concrete. | Expert. | Act.  | Rel. |
-|---------------------------------|----------|--------|-----------|-------|-------|---------|-------|-----------|-----------|---------|-------|------|------------|
-| GPT-4o 🥇                       | 69.00    | 72.50    | 68.18  | 66.67     | 45.83 | 87.5  | 70.83   | 50.00 | 68.18     | 76.19     | 70.97   | 83.33 | 63.64|
-| Mini-Gemini-HD-34B 🥇           | 69.00    |62.50    | 63.64  | 70.83     | 54.17 | 79.17 | 62.50   | 72.73 | 86.36     | 85.71     | 54.84   | 19.17 | 68.18|
-| LLaVA-1.6-34B 🥉                | 68.67    |75.00     | 68.18  | 66.67     | 41.67 | 79.17 | 54.17   | 72.72 | 81.81     | 71.42     | 64.52   | 79.17 | 68.18| 
-| Qwen-VL-max                     | 68.33    |67.50     | 72.73  | 66.67    | 41.67  | 79.17 | 62.5 | 63.64  | 77.27      | 80.95     | 61.29   | 79.17  | 72.73|
-| Bunny-Llama-3-8B-V              | 60.67    |55.00     | 63.64  | 54.17     | 37.50 | 79.17 | 62.50   | 54.55 | 72.73     | 85.71     | 48.39   | 75.00 | 50.00| 
-| InternVL-Chat-V1-5 (26B)        | 59.67    |62.5      | 59.09  | 66.67     | 41.67 | 66.67 | 41.67   | 54.55 | 63.64     | 66.67     | 45.16   | 79.17 | 72.73| 
-| Yi-VL-34B                       | 58.33    |52.50     | 63.64  | 70.83     | 41.67 | 75.00 | 37.50   | 59.09 | 68.18     | 57.14     | 48.39   | 70.83 | 63.64| 
-| Bunny-MMR-3B                    | 58.33    |60.0      | 59.09  | 58.33     | 25.0  | 83.33 | 50.0    | 54.55 | 68.18     | 57.14     | 51.61   | 79.17 | 54.55| 
-| Idefics2-8B                     | 56.67    |57.50     | 59.09  | 54.17     | 50.00 | 79.17 | 41.67   | 27.27 | 77.27     | 76.19     | 45.16   | 75.00 | 40.91|
-| Cogvlm2-llama3                  | 54.00    |60.00     | 63.64  | 54.17     | 37.5  | 70.83 | 33.33   | 40.91 | 50.00     | 85.71     | 41.94   | 62.50 | 50.00| 
-| Step-1V                         | 53.33    |60.00     | 54.55  | 58.33     | 20.83 | 70.83 | 54.17   | 31.82 | 54.55     | 57.14     | 45.16   | 79.17 | 50.00| 
-| Phi-3-vision (4B)               | 52.33    |62.50     | 59.09  | 58.33     | 37.50 | 70.83 | 33.33   | 31.82 | 54.55     | 66.67     | 41.94   | 58.33 | 50.00| 
-| Glm-4V                          | 50.00    |60.00     | 54.55  | 54.17     | 29.17 | 58.33 | 41.67   | 27.27 | 72.73     | 47.62     | 35.48   | 70.83 | 45.45| 
-| Gemini-pro-vision               | 48.67    |42.50     | 50.00  | 41.67     | 25.00 | 83.33 | 50.00   | 45.45 | 40.91     | 47.62     | 45.16   | 70.83 | 45.45| 
-| Deepseek-VL-7B-Chat             | 47.67    |52.50     | 54.55  | 54.17     | 37.5  | 62.5  | 25.00   | 18.18 | 54.55     | 52.38     | 35.48   | 75.00 | 50.00| 
-| Mplug-owl2-llama2-7B            | 41.33    |32.50     | 63.64  | 58.33     | 20.83 | 62.50 | 37.50   | 13.64 | 54.55     | 47.62     | 25.81   | 58.33 | 31.82| 
-| MiniCPM-Llama3-V                | 40.33    |37.5      | 45.45  | 50.00     | 16.67 | 41.67 | 37.5    | 36.36 | 68.18     | 33.33     | 29.03   | 41.67 | 54.55| 
-| LLaVA-RLHF (7B)                 | 30.67    |7.50      | 36.36  | 33.33     | 33.33 | 50.00 | 16.67   | 9.09  | 59.09     | 38.10     | 22.58   | 50.00 | 31.82| 
-| Claude3-Opus-V                  | 28.67    |35.00     | 22.73  | 12.50     | 16.67 | 33.33  | 16.67  | 22.73 | 45.45     | 33.33     | 25.81   | 37.50 | 40.91| 
+![table01](./figure/table01.png) 
 
-
-| Method                   | Avg. MR ↓ |Char/Num | Pres.  | Color/Tex | Num.  | Shape | Posture | Pos.  | Abstract. | Concrete. | Expert. | Act.  | Rel. | 
-|--------------------------|----------|--------|-----------|-------|-------|---------|-------|-----------|-----------|---------|-------|------|------------|
-| Mini-Gemini-HD-34B 🥇    | 15.16    |21.88    | 12.50  | 10.53     | 7.14  | 5.00  | 28.57   | 15.79 | 9.52      | 5.26       | 32.00   | 9.52  | 11.76 | 
-| LLaVA-1.6-34B  🥈        | 16.26    |6.25     | 11.76  | 20.00     | 23.08 | 9.52  | 35.00   | 11.11 | 14.28     | 25.00      | 20.00   | 9.52  | 16.67 | 
-| GPT-4o  🥉               | 19.46    |9.38     | 16.67  | 23.81     | 26.67 | 4.55  | 19.05   | 38.89 | 28.57     | 15.79      | 24.14   | 13.04 | 22.22 | 
-| Qwen-VL-max              | 20.23    |22.86    | 11.11  | 23.81     | 28.57 | 5.00  | 25.00   | 30.00 | 19.05     | 19.05      | 29.63   | 9.52  | 15.79 | 
-| Bunny-Llama-3-8B-V       | 22.22    |15.38    | 22.22  | 18.75     | 40.00 | 5.00  | 28.57   | 29.41 | 23.81     | 10.00      | 40.00   | 10.00 | 26.67 | 
-| Bunny-MMR-3B             | 23.91    |11.11    | 13.33  | 26.32     | 53.85 | 4.76  | 40.00   | 29.41 | 28.57     | 33.33      | 33.33   | 9.52  | 14.29 | 
-| Idefics2-8B              | 26.72    |23.33    | 27.78  | 23.53     | 20.00 | 13.64 | 50.00   | 40.00 | 22.73     | 11.11      | 41.67   | 14.29 | 40.00 | 
-| Yi-VL-34B                | 27.39    |27.59    | 22.22  | 15.00     | 28.57 | 10.00 | 50.00   | 27.78 | 16.67     | 42.86      | 42.31   | 22.73 | 17.65 | 
-| InternVL-Chat-V1-5 (26B) | 28.97    |21.88    | 18.75  | 23.81     | 37.50 | 27.27 | 52.38   | 29.41 | 33.33     | 26.32      | 44.00   | 13.64 | 20.00 | 
-| Step-1V                  | 30.43    |14.29    | 25.00  | 26.32     | 61.54 | 5.56  | 40.91   | 61.11 | 33.33     | 33.33      | 44.00   | 9.52  | 21.43 | 
-| Cogvlm2-llama3           | 33.06    |22.58    | 22.22  | 27.78     | 30.77 | 15.00 | 61.90   | 35.71 | 45.00     | 14.29      | 51.85   | 28.57 | 38.89 | 
-| Phi-3-vision (4B)        | 34.03    |19.35    | 18.75  | 26.32     | 43.75 | 19.05 | 55.56   | 58.82 | 40.00     | 22.22      | 48.00   | 33.33 | 31.25 | 
-| Gemini-pro-vision        | 34.82    |29.17    | 31.25  | 41.18     | 45.45 | 13.04 | 40.00   | 33.33 | 52.63     | 44.44      | 48.15   | 19.05 | 23.08 | 
-| Glm-4V                   | 38.78    |27.27    | 36.84  | 35.00     | 56.25 | 33.33 | 52.38   | 53.85 | 20.00     | 47.37      | 57.69   | 19.05 | 37.50 | 
-| Deepseek-VL-7B-Chat      | 42.34    |30.00    | 20.00  | 27.78     | 43.75 | 31.82 | 71.43   | 77.78 | 45.45     | 47.62      | 57.69   | 14.29 | 38.89 | 
-| Mplug-owl2-llama2-7B     | 42.86    |38.10    | 17.65  | 22.22     | 61.54 | 25.00 | 57.14   | 76.92 | 40.00     | 47.37      | 65.22   | 26.32 | 46.15 | 
-| LLaVA-RLHF (7B)          | 57.01    |86.36    | 50.00  | 50.00     | 46.67 | 40.00 | 78.95   | 81.82 | 38.10     | 57.89      | 68.18   | 29.41 | 56.25 | 
+![table02](./figure/table02.png) 
 
 ## 🚩 MMR-data
 
